@@ -1,12 +1,13 @@
 const express = require('express');
-const { createUser, findUserByEmail } = require('./userService');
+const { createUser, findUserByEmail, findUserByID } = require('./userService');
 const { createToken } = require('../../tokens/tokenService');
+const { verifyToken } = require('../../middleware/verifyToken');
 
 const router = express.Router();
 
 router.route('/')
   .post(async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, firstName, lastName } = req.body;
     if (!email || email === "") {
       res.status(400).json({ message: 'email must be provided' });
       return;
@@ -17,6 +18,17 @@ router.route('/')
       return;
     }
 
+    if (!firstName || firstName === "") {
+      res.status(400).json({ message: 'firstName must be provided' });
+      return
+    }
+
+    if (!lastName || lastName === "") {
+      res.status(400).json({ message: 'lastName must be provided' });
+      return
+    }
+
+
     try {
       const foundUser = await findUserByEmail(email);
       if (foundUser) {
@@ -24,10 +36,23 @@ router.route('/')
         return;
       }
 
-      const user = await createUser({ email, password });
+      const user = await createUser({ email, password, firstName, lastName });
       res.json({ data: { id: user._id } });
-    } catch (ex) {
-      console.log(ex);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: 'internal server error' });
+    }
+  });
+
+router
+  .use(verifyToken)
+  .route('/me')
+  .get(async (req, res) => {
+    try {
+      const user = await findUserByID(req.user.id);
+      res.json({ data: user });
+    } catch(err) {
+      console.log(err);
       res.status(500).json({ message: 'internal server error' });
     }
   });
