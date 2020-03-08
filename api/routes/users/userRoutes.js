@@ -1,7 +1,7 @@
 const express = require('express');
 const User = require('./userModel');
 const { createUser, findUserByEmail } = require('./userService');
-const { createToken } = require('../../utils/tokens');
+const { createToken, verifyToken } = require('../../utils/tokens');
 
 const router = express.Router();
 
@@ -51,14 +51,19 @@ router.route('/')
   });
 
 router.route('/me')
-  .get((req, res) => {
+  .get(async (req, res) => {
     const { headers } = req;
-
     if (!headers.authorization || headers.authorization === '') {
       res.status(403).json({ message: 'authorization required' });
+      return;
     }
 
-    
+    try {
+      const user = await verifyToken(headers.authorization);
+      res.json({ data: { id: user.id }});
+    } catch (err) {
+      res.status(403).json({ message: 'authorization is required' });
+    }
   });
 
 router.route('/login')

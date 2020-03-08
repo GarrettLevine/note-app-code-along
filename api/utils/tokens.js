@@ -11,6 +11,7 @@ exports.createToken = (data) => {
 exports.verifyToken = async (token) => {
   try {
     const decoded = jwt.verify(token, JWT_KEY);
+    console.log(decoded);
     return decoded;
   } catch (err) {
     throw err;
