@@ -1,10 +1,12 @@
 const User = require('./userModel');
 
-exports.createUser = async ({ email, password }) => {
+exports.createUser = async ({ email, password, firstName, lastName }) => {
   try {
     const newUser = new User({
       email,
       password,
+      firstName,
+      lastName,
     });
     const user = await newUser.save();
     return user;
