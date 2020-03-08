@@ -44,19 +44,6 @@ router.route('/')
     }
   });
 
-router
-  .use(verifyToken)
-  .route('/me')
-  .get(async (req, res) => {
-    try {
-      const user = await findUserByID(req.user.id);
-      res.json({ data: user });
-    } catch(err) {
-      console.log(err);
-      res.status(500).json({ message: 'internal server error' });
-    }
-  });
-
 router.route('/login')
   .post(async (req, res) => {
     const { email, password } = req.body;
@@ -90,6 +77,19 @@ router.route('/login')
       res.json({ data: { token } });
     } catch (ex) {
       console.log(ex);
+      res.status(500).json({ message: 'internal server error' });
+    }
+  });
+
+  router
+  .use(verifyToken)
+  .route('/me')
+  .get(async (req, res) => {
+    try {
+      const user = await findUserByID(req.user.id);
+      res.json({ data: user });
+    } catch(err) {
+      console.log(err);
       res.status(500).json({ message: 'internal server error' });
     }
   });

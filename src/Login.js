@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -11,6 +11,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
+import { setToken } from './utils/token';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,8 +44,33 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SignInSide() {
+export default function SignInSide(props) {
   const classes = useStyles();
+  const [email, updateEmail] = useState('');
+  const [password, updatePassword] = useState('');
+  const [error, updateError] = useState();
+  const handleSubmit = async  (e) => {
+    try {
+      e.preventDefault();
+
+      const response = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+      setToken(data.data.token);
+      props.getUser();
+    } catch (err) {
+      console.log(err);
+      updateError(err.message);
+    }
+  }
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -58,7 +84,11 @@ export default function SignInSide() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
+          { error !== '' &&  <Typography color="error">{error}</Typography> }
+          <form
+            className={classes.form}
+            onSubmit={handleSubmit}
+          >
             <TextField
               variant="outlined"
               margin="normal"
@@ -69,6 +99,8 @@ export default function SignInSide() {
               name="email"
               autoComplete="email"
               autoFocus
+              value={email}
+              onChange={(e) => { updateEmail(e.target.value); }}
             />
             <TextField
               variant="outlined"
@@ -80,6 +112,8 @@ export default function SignInSide() {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e) => { updatePassword(e.target.value); }}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -96,7 +130,7 @@ export default function SignInSide() {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link to="#" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>

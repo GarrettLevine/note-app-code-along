@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -34,6 +34,19 @@ const useStyles = makeStyles(theme => ({
 
 export default function SignUp(props) {
   const classes = useStyles();
+  const [firstName, updateFirstName] = useState('');
+  const [lastName, updateLastName] = useState('');
+  const [email, updateEmail] = useState('')
+  const [password, updatePassword] = useState('');
+
+  async function handleSubmit(e) {
+    try {
+      e.preventDefault();
+      
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   return (
     <Container component="main" maxWidth="xs">
