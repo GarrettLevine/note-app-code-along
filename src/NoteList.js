@@ -39,7 +39,6 @@ export default function NoteList() {
         if (!response.ok) {
           throw new Error(data.message);
         }
-        console.log(data);
         updateNotes(data.data);
       } catch(err) {
         console.log(err);
