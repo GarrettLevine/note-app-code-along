@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function NoteList() {
+export default function NoteList(props) {
   const classes = useStyles();
   const [notes, updateNotes] = useState([]);
 
@@ -58,7 +58,11 @@ export default function NoteList() {
           <div className={classes.heroButtons}>
             <Grid container spacing={2} justify="center">
               <Grid item>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => { props.history.push('/note/create'); }}
+                >
                   New Note
                 </Button>
               </Grid>
