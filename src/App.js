@@ -12,7 +12,7 @@ import SignUp from './SignUp';
 import { getToken } from './utils/token';
 
 function App() {
-  const [ user, updateUser ] = useState(undefined);
+  const [ user, updateUser ] = useState({});
   async function getUser() {
     const token = getToken();
     try {
@@ -29,7 +29,7 @@ function App() {
 
       updateUser(data.data);
     } catch (err) {
-      console.log(err);
+      updateUser(undefined);
     }
   }
 
