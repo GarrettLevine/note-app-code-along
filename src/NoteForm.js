@@ -39,6 +39,9 @@ export default function NoteForm (props) {
         body: JSON.stringify({ text: noteText }),
       });
       const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
       props.history.push('/');
     } catch (err) {
       console.log(err);
